@@ -199,6 +199,8 @@ pubSub.publish('name', 'ttsy1');  // 这个主题被取消订阅了
 pubSub.publish('sex', 'male');  // your sex is male
 ```
 
+### 用defineProty实现双向数据绑定
+
 ### 实现深拷贝浅拷贝
 
 ### 实现promise
