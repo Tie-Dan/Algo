@@ -201,62 +201,19 @@ pubSub.publish('sex', 'male');  // your sex is male
 
 ### 4. 实现双向绑定Proxy比defineproperty优劣如何?
 
-1. 基于数据劫持实现的双向绑定的特点
+- **defineproperty**
+  1. 无法监听数组变化
+     - Vue是可以检测到数组变化的，只实现八种方法（作者用了一些奇技淫巧,把无法监听数组的情况hack掉了）
+  2. 只能劫持对象的属性
+     - 因此我们需要对每个对象的每个属性进行遍历，如果属性值也是对象那么需要深度遍历,显然能劫持一个完整的对象是更好的选择
 
-   > 数据劫持比较好理解,通常我们利用`Object.defineProperty`劫持对象的访问器,在属性值发生变化时我们可以获取变化,从而进行进一步操作。
+- **Proxy**
+  1. Proxy直接可以劫持整个对象,并返回一个新对象,不管是操作便利程度还是底层功能上都远强于`Object.defineProperty`
+  2. Proxy可以直接监听数组的变化
+  3. Proxy返回的是一个新对象,我们可以只操作新的对象达到目的,而`Object.defineProperty`只能遍历对象属性直接修改
+  4. Proxy有多达13种拦截方法,不限于apply、ownKeys、deleteProperty、has等等是`Object.defineProperty`不具备的。
 
-   ```JS
-   // 这是将要被劫持的对象
-   const data = {
-     name: '',
-   };
-   
-   function say(name) {
-     if (name === '古天乐') {
-       console.log('给大家推荐一款超好玩的游戏');
-     } else if (name === '渣渣辉') {
-       console.log('戏我演过很多,可游戏我只玩贪玩懒月');
-     } else {
-       console.log('来做我的兄弟');
-     }
-   }
-   
-   // 遍历对象,对其属性值进行劫持
-   Object.keys(data).forEach(function(key) {
-     Object.defineProperty(data, key, {
-       enumerable: true,
-       configurable: true,
-       get: function() {
-         console.log('get');
-       },
-       set: function(newVal) {
-         // 当属性值发生变化时我们可以进行额外操作
-         console.log(`大家好,我系${newVal}`);
-         say(newVal);
-       },
-     });
-   });
-   
-   data.name = '渣渣辉';
-   //大家好,我系渣渣辉
-   //戏我演过很多,可游戏我只玩贪玩懒月
-   ```
-
-   基于数据劫持的双向绑定离不开`Proxy`与`Object.defineProperty`等方法对对象/对象属性的"劫持",我们要实现一个完整的双向绑定需要以下几个要点。
-
-   - 利用`Proxy`或`Object.defineProperty`生成的Observer针对对象/对象的属性进行"劫持",在属性发生变化后通知订阅者
-
-   - 解析器Compile解析模板中的`Directive`(指令)，收集指令所依赖的方法和数据,等待数据变化然后进行渲染
-
-   - Watcher属于Observer和Compile桥梁,它将接收到的Observer产生的数据变化,并根据Compile提供的指令进行视图渲染,使得数据变化促使视图变化
-
-2. 基于Object.defineProperty双向绑定的特点
-
-   
-
-3. 基于Proxy双向绑定的特点
-
-### 5. 实现深拷贝浅拷贝
+### 5. 实现深浅拷贝
 
 ### 6. 手写实现promise(超级简易版)
 
@@ -314,4 +271,4 @@ module.exports = Promise
 
 ### 7. 手写实现diff算法
 
-### 8. 
+### 8. 手写实现redux
