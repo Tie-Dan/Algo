@@ -215,6 +215,62 @@ pubSub.publish('sex', 'male');  // your sex is male
 
 ### 5. 实现深浅拷贝
 
+> JavaScript的数据类型分为基本数据类型和引用数据类型。
+>
+> 对于基本数据类型的拷贝，并没有深浅拷贝的区别，我们所说的深浅拷贝都是对于引用数据类型而言的。
+
+**浅拷贝**
+
+浅拷贝的意思就是只复制引用，而未复制真正的值
+
+**深拷贝**
+
+深拷贝就是对目标的完全拷贝，不像浅拷贝那样只是复制了一层引用，就连值也都复制了
+
+只要进行了深拷贝，它们老死不相往来，谁也不会影响谁
+
+目前实现深拷贝的方法不多，主要是两种：
+
+1. 利用 JSON 对象中的 parse 和 stringify (如果对象中含有一个函数时，就不能用这个方法进行深拷贝)
+
+2. 利用递归来实现每一层都重新创建对象并赋值
+
+   ```js
+   function deepClone(source){
+       // 判断复制的目标是数组还是对象
+    const targetObj = source.constructor === Array ? [] : {}
+     // 遍历目标
+    for(let keys in source){
+    	if(source.hasOwnProperty(keys)){
+            // 如果值是对象，就递归一下
+           if(source[keys] && typeof source[keys] === 'object'){
+               targetObj[keys] = source[keys].constructor === Array ? [] : {};
+               targetObj[keys] = deepClone(source[keys]);
+           }else{ 
+               // 如果不是，就直接赋值
+               targetObj[keys] = source[keys];
+           }
+   	 } 
+    }
+    return targetObj;
+   }
+   ```
+
+- concat 只是对数组的第一层进行深拷贝
+
+- slice 只是对数组的第一层进行深拷贝
+
+- Object.assign() 拷贝的是属性值。假如源对象的属性值是一个指向对象的引用，它也只拷贝那个引用值
+
+- ... 实现的是对象第一层的深拷贝。后面的只是拷贝的引用值
+
+**总结：**
+
+1. 赋值运算符 = 实现的是浅拷贝，只拷贝对象的引用值
+2. JavaScript 中数组和对象自带的拷贝方法都是“首层浅拷贝”
+3. JSON.stringify 实现的是深拷贝，但是对目标对象有要求
+4. 若想真正意义上的深拷贝，请递归
+
 ### 6. 手写实现promise(超级简易版)
 
 ```js
