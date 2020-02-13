@@ -82,138 +82,98 @@
 
   参详code实现
 
-### 3.介绍下观察者模式和订阅-发布模式的区别，各自适用于什么场景
+### 3.手写观察者和发布订阅者模式
 
-> 观察者模式中主体和观察者是互相感知的，发布-订阅模式是借助第三方来实现调度的，发布者和订阅者之间互不感知
+- 实现发布订阅模式 
 
-###### 观察者模式（Observer）
+  - 订阅一件事当这件事发生的时候 触发对应的函数
+  - 订阅是on 发布是emit  Promise内部也是基于发布订阅者
+  - 订阅和发布没有任何关系
 
-观察者模式指的是一个对象（Subject）维持一系列依赖于它的对象（Observer），当有关状态发生变更时 Subject 对象则通知一系列 Observer 对象进行更新。
-
-在观察者模式中，Subject 对象拥有添加、删除和通知一系列 Observer 的方法等等，而 Observer 对象拥有更新方法等等。
-
-在 Subject 对象添加了一系列 Observer 对象之后，Subject 对象则维持着这一系列 Observer 对象，当有关状态发生变更时 Subject 对象则会通知这一系列 Observer 对象进行更新
-
-```js
-// Subject
-function Subject(){
-  this.observers = [];
-}
-// Subject的方法
-Subject.prototype = {
-  add:function(observer){  // 添加
-    this.observers.push(observer);
-  },
-  remove:function(observer){  // 删除
-    var observers = this.observers;
-    for(var i = 0;i < observers.length;i++){
-      if(observers[i] === observer){
-        observers.splice(i,1);
-      }
+  ```js
+  let fs = require("fs");
+  // on是订阅 emit是发布
+  let e = {
+    _obj: {},
+    _callback: [],
+    on(callback) {
+      // 订阅一件事 当这件事发生的时候 触发对应的函数
+      // 订阅 就是将函数放到数组中
+      this._callback.push(callback);
+    },
+    emit(key, value) {
+      this._obj[key] = value; // 让订阅的数组中的方法，依次执行
+      this._callback.forEach(method => {
+        method(this._obj);
+      });
     }
-  },
-  notify:function(){  // 通知
-    var observers = this.observers;
-    for(var i = 0;i < observers.length;i++){
-      observers[i].update();
+  };
+  // 只要发布了就执行以下
+  e.on(function(obj) {
+    // 每次发布都会触发此函数
+    console.log("获取一个");
+  });
+  e.on(function(obj) {
+    // 每次发布都会触发此函数
+    if (Object.key(obj).length === 2) {
+      // 用户根据结果决定输出
+      console.log(obj);
+    }
+  });
+  fs.readFile("./age.txt", "utf8", function(error, data) {
+    e.emit("age", data);
+  });
+  fs.readFile("./name.txt", "utf8", function(error, data) {
+    e.emit("name", data);
+  });
+  
+  ```
+
+- 实现观察者模式
+
+  - 观察者和被观察者是有关联的，观察者需要将自己放到被观察者之上，当被观察者状态发生变化，需要通知所有的观察者
+
+  ```js
+  // 被观察者 （小宝宝）
+  class Subject {
+    constructor(name) {
+      this.name = name;
+      this.state = "开心"; // 被观察者的状态
+      this.observers = []; // 存放观察者
+    }
+    // 需要将注册者放到自己的身上
+    attach(ther) {
+      this.observers.push(ther);
+    }
+    // 更新被观察者的状态
+    setState(state) {
+      this.state = state;
+      this.observers.forEach(ther => {
+        ther.update(this);
+      });
     }
   }
-}
-// Observer
-function Observer(name){
-  this.name = name;
-}
-// Observer方法
-Observer.prototype = {
-  update:function(){  // 更新
-    console.log('my name is '+this.name);
-  }
-}
-
-// 实例Subject、Observer
-var sub = new Subject();
-var obs1 = new Observer('ttsy1');
-var obs2 = new Observer('ttsy2');
-// 添加Observer
-sub.add(obs1);
-sub.add(obs2);
-// 更新Observer
-sub.notify();  //my name is ttsy1、my name is ttsy2
-// 删除Observer
-sub.remove(obs2);
-```
-
-###### 发布订阅模式（Publisher && Subscriber）
-
-发布订阅模式指的是希望接收通知的对象（Subscriber）基于一个主题通过自定义事件订阅主题，被激活事件的对象（Publisher）通过发布主题事件的方式通知各个订阅该主题的 Subscriber 对象。
-
-```js
-let pubSub = {
-  list:{},
-  subscribe:function(key,fn){  // 订阅
-    if (!this.list[key]) {
-      this.list[key] = [];
+  // 观察者
+  class Observer {
+    constructor(name) {
+      this.name = name;
     }
-    this.list[key].push(fn);
-  },
-  publish:function(){  // 发布
-    let arg = arguments;
-    let key = [].shift.call(arg);
-    let fns = this.list[key];
-
-    if(!fns || fns.length<=0) return false;
-
-    for(var i=0,len=fns.length;i<len;i++){
-      fns[i].apply(this, arg);
+    // 等会被观察者的状态发生变化会调用这个方法
+    update(subject) {
+      console.log(this.name + ":" + subject.name + "当前状态是" + subject.state);
     }
-
-  },
-  unSubscribe(key) {  // 取消订阅
-    delete this.list[key];
   }
-};
+  let bady = new Subject("小宝宝");
+  let father = new Observer("爸爸");
+  let mother = new Observer("妈妈");
+  bady.attach(father);
+  bady.attach(mother);
+  bady.setState("不开心");
+  bady.setState("饿了");
+  
+  ```
 
-pubSub.subscribe('name', (name) => {
-  console.log('your name is ' + name);
-});
-pubSub.subscribe('sex', (sex) => {
-  console.log('your sex is ' + sex);
-});
-pubSub.publish('name', 'ttsy1');  // your name is ttsy1
-pubSub.publish('sex', 'male');  // your sex is male
-```
-
-上述代码的订阅是基于 name 和 sex 主题来自定义事件，发布是通过 name 和 sex 主题并传入自定义事件的参数，最终触发了特定主题的自定义事件。
-
-可以通过 unSubscribe 方法取消特定主题的订阅。
-
-```js
-pubSub.subscribe('name', (name) => {
-  console.log('your name is ' + name);
-});
-pubSub.subscribe('sex', (sex) => {
-  console.log('your sex is ' + sex);
-});
-pubSub.unSubscribe('name');
-pubSub.publish('name', 'ttsy1');  // 这个主题被取消订阅了
-pubSub.publish('sex', 'male');  // your sex is male
-```
-
-### 4. 实现双向绑定Proxy比defineproperty优劣如何?
-
-- **defineproperty**
-  1. 无法监听数组变化
-     - Vue是可以检测到数组变化的，只实现八种方法（作者用了一些奇技淫巧,把无法监听数组的情况hack掉了）
-  2. 只能劫持对象的属性
-     - 因此我们需要对每个对象的每个属性进行遍历，如果属性值也是对象那么需要深度遍历,显然能劫持一个完整的对象是更好的选择
-
-- **Proxy**
-  1. Proxy直接可以劫持整个对象,并返回一个新对象,不管是操作便利程度还是底层功能上都远强于`Object.defineProperty`
-  2. Proxy可以直接监听数组的变化
-  3. Proxy返回的是一个新对象,我们可以只操作新的对象达到目的,而`Object.defineProperty`只能遍历对象属性直接修改
-  4. Proxy有多达13种拦截方法,不限于apply、ownKeys、deleteProperty、has等等是`Object.defineProperty`不具备的。
-
-### 5. 实现深浅拷贝
+### 4. 实现深浅拷贝
 
 > JavaScript的数据类型分为基本数据类型和引用数据类型。
 >
@@ -271,7 +231,7 @@ pubSub.publish('sex', 'male');  // your sex is male
 3. JSON.stringify 实现的是深拷贝，但是对目标对象有要求
 4. 若想真正意义上的深拷贝，请递归
 
-### 6. 手写实现promise(超级简易版)
+### 5. 手写实现promise(超级简易版)
 
 ```js
 /* 
@@ -325,6 +285,9 @@ class Promise {
 module.exports = Promise
 ```
 
+### 6. 手写防抖和截流
+
 ### 7. 手写实现diff算法
 
 ### 8. 手写实现redux
+
