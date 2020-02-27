@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id="parent">
+        <div class="children1">
+            <div class="children1-1">
+                <div class="children1-1-1">
+                    a
+                </div>
+            </div>
+            <div class="children1-2">
+                <div class="children1-2-1">
+                    b
+                </div>
+            </div>
+            <div class="children1-3">
+                c
+            </div>
+        </div>
+        <div class="children2">
+            <div class="children2-1">
+                <div class="children2-1-1">
+                    d
+                </div>
+            </div>
+            <div class="children2-2">
+                <div class="children2-2-1">
+                    e
+                </div>
+            </div>
+            <div class="children2-3">
+                f
+            </div>
+        </div>
+        <div class="children3">
+            <div class="children3-1">
+                <div class="children3-1-1">
+                   g
+                </div>
+            </div>
+            <div class="children3-2">
+                <div class="children3-2-1">
+                    h
+                </div>
+            </div>
+            <div class="children3-3">
+                r
+            </div>
+        </div>
+    </div>
+    <script>
+        let node_prent = document.querySelector('#parent')
+        // DFS 深度优先遍历 栈
+        let dfc = (node)=>{
+            let stack = [] // 栈
+            let nodes = [] // 存所有节点
+            if(node){
+                stack.push(node) // 假如有节点就存到栈中
+                while(stack.length){
+                    let item = stack.pop() // 出栈
+                    nodes.push(item)
+                    let children = item.children // 拿到子节点
+                    // 每层从右往左取 取到放进stack
+                    for(let i=children.length-1;i>=0;i--){
+                        stack.push(children[i])
+                    }
+                }
+            }
+
+            return nodes // 所有节点返回
+
+        }
+        console.log(dfc(node_prent))
+        // 广度优先遍历  队列
+        let bfs = (node)=>{
+            let stack = [] // 队列
+            let nodes = [] // 返回的节点
+            if(node){
+                stack.push(node)
+                while(stack.length){
+                    let item = stack.shift() // 从前面去
+                    nodes.push(item)
+                    let children = item.children
+                    for(let i=0;i<children.length;i++){
+                        stack.push(children[i])
+                    }
+                }
+            }
+            return nodes
+        }
+        console.log(bfs(node_prent))
+    </script>
+</body>
+</html>
