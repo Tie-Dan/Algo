@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body style="height: 5000px;">
+    <script>
+        // 防抖
+        // function debounce(fn, wait) {
+        //     var timeout = null;
+        //     return function () {
+        //         if (timeout !== null)
+        //             clearTimeout(timeout);
+        //         timeout = setTimeout(fn, wait);
+        //     }
+        // }
+        // 截流
+        function throttle(func, delay) {
+            var timer = null;
+            return function () {
+                var context = this;
+                var args = arguments;
+                if (!timer) {
+                    timer = setTimeout(function () {
+                        func.apply(context, args);
+                        timer = null;
+                    }, delay);
+                }
+            }
+        }
+        //处理函数
+        function handle() {
+            console.log(Math.random());
+        }
+
+
+        // 滚动事件
+        // window.addEventListener('scroll', handle, 1000);
+        window.addEventListener('scroll', throttle(handle, 1000));
+    </script>
+</body>
+
+</html>
+</script>
+</body>
+
+</html>
