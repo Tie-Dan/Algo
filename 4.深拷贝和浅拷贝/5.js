@@ -38,6 +38,6 @@ function deepClone(obj, hash = new WeakMap()) {
         }
     })
     return Object.assign(cloneObj, ...result)
-
 }
+
 //这里我们使用 WeakMap 作为哈希表，因为它的键是弱引用的，而我们这个场景里键恰好是对象，需要弱引用。

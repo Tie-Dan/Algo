@@ -5,7 +5,7 @@ class Subject {
         this.state = "开心"; // 被观察者的状态
         this.observers = []; // 存放观察者
     }
-    // 需要将注册者放到自己的身上
+    // 需要将观察者放到自己的身上
     attach(ther) {
         this.observers.push(ther);
     }

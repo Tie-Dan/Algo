@@ -20,18 +20,14 @@ function deepClone(obj) {
     return cloneObj
 }
 
+let sym = Symbol('我是一个Symbol')
+let obj1 = {
+    a: {
+        b: 1,
 
-const obj = {
-    a: 1
+    },
 }
-obj.loopObj = obj
-const obj1 = deepClone(obj)
-
+obj1[sym] = 111
+let obj2 = deepClone(obj1)
 console.log(obj1)
-// 循环递归法 function、Date、RegExp 和Error无法复制，因为它们有特殊的构造函数。
-// 拷贝的对象的值中如果有函数,undefined,symbol则经过JSON.stringify()序列化后的JSON字符串中这个键值对会消失
-// 无法拷贝不可枚举的属性， 无法拷贝对象的原型链
-// 拷贝Date引用类型会变成字符串
-// 拷贝RegExp引用类型会变成空对象
-// 对象中含有NaN、 Infinity和 - Infinity， 则序列化的结果会变成null
-// 无法拷贝对象的循环应用(即obj[key] = obj)
+console.log(obj2)

@@ -6,23 +6,23 @@ let e = {
         // 订阅 就是将函数放到数组中
         this._callback.push(callback);
     },
-    emit(notify) {
+    emit(value) {
         this._callback.forEach(method => {
-            method(notify);
+            method(value);
         });
     }
 };
 // 订阅
-e.on(function (notify) {
-    console.log(notify + ":张三的订阅");
+e.on(function (value) {
+    console.log(value + ":张三的订阅");
 });
 // 订阅
-e.on(function (notify) {
-    console.log(notify + ":李四的订阅");
+e.on(function (value) {
+    console.log(value + ":李四的订阅");
 });
 // 订阅
-e.on(function (notify) {
-    console.log(notify + ":王五的订阅");
+e.on(function (value) {
+    console.log(value + ":王五的订阅");
 });
 // 发布
 e.emit('发布')

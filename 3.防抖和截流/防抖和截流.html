@@ -12,23 +12,20 @@
         // 防抖
         // function debounce(fn, wait) {
         //     var timeout = null;
-        //     return function () {
+        //     return ()= {
         //         if (timeout !== null)
         //             clearTimeout(timeout);
         //         timeout = setTimeout(fn, wait);
         //     }
         // }
         // 截流
-        function throttle(func, delay) {
-            var timer = null;
-            return function () {
-                var context = this;
-                var args = arguments;
-                if (!timer) {
-                    timer = setTimeout(function () {
-                        func.apply(context, args);
-                        timer = null;
-                    }, delay);
+        function throttle(fn, delay) {
+            var lastTime = 0; // 上一次函数触发的时间
+            return () => {
+                var nowTime = Date.now();
+                if (nowTime - lastTime > delay) {
+                    fn(); // method.apply(this) 看你用不用箭头函数
+                    lastTime = nowTime;
                 }
             }
         }
