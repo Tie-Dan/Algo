@@ -22,7 +22,7 @@
 
 ## 02. 发布订阅者和观察者
 
- 	![sb](img/sb.png)
+ 	![](img/ss.png)
 
 **观察者模式：**观察者（Observer）直接订阅（Subscribe）主题（Subject），而当主题被激活的时候，会触发（Fire Event）观察者里的事件。
 
