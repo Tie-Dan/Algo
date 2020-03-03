@@ -111,13 +111,15 @@
 
 3. lodash([第三方库](https://github.com/lodash/lodash/blob/master/.internal/baseClone.js)）
 
-## 05. Diff算法
+## 05. 实现PromiseA+
 
-## 06. 实现PromiseA+
+## 06. 手写Vue
 
-## 07. 从0到1实现redux
+## 07. Diff算法
 
+## 08. HTTP
 
+## 09. 高阶函数的使用
 
 
 
