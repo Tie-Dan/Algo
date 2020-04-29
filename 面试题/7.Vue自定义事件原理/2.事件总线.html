@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="app">
+        <Dwa></Dwa>
+        <Ewa></Ewa>
+    </div>
+    <template id="dwa">
+        <div>
+            <h1>大娃</h1>
+            <p>二娃组件发过来的红包{{money}}</p>
+        </div>
+    </template>
+    <template id="ewa">
+        <div>
+            <h1>二娃</h1>
+            <button @click="give">给大娃发红包</button>
+        </div>
+    </template>
+    <script src="./vue.js"></script>
+    <script>
+        // 组件
+        Vue.component('Dwa', {
+            template: '#dwa',
+            data() {
+                return {
+                    money: 1000
+                }
+            },
+            methods: {
+
+            },
+            mounted() {
+                this.$on('hongbao', (money) => {
+                    console.log(money)
+                })
+                this.$emit('hongbao', this.money)
+            }
+
+        })
+        // 组件
+        Vue.component('Ewa', {
+            template: '#ewa',
+            data() {
+                return {
+                    money: 3000
+                }
+            },
+            methods: {
+                give() {
+                    Bus.$emit('hongbao', this.money)
+                }
+            }
+        })
+        // 事件总线
+        let Bus = new Vue()
+
+        let vm = new Vue({
+            el: '#app'
+        })
+    </script>
+</body>
+
+</html>

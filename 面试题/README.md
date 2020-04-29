@@ -221,6 +221,182 @@
     2. await命令后面可以是Promise对象或原始类型的值，yield命令后面只能是Thunk函数或Promise对象。
     3. 返回值是Promise。返回非Promise时，async函数会把它包装成Promise返回。(Promise.resolve(value))
 
+## 07. Vue自定事件的原理
+
+1. 基本用法
+
+   ```js
+   vm.$emit('自定义事件的名称',this.data) // 触发事件
+   vm.$on('自定义事件的名称',function(data){}) // 监听事件
+   ```
+
+   **注意**:
+
+   ​	 如果是子到父通信 不能用 $on 侦听子组件抛出的事件，而**必须**在模板里直接用 v-on 绑定。
+   ​	 就是父组件可以在使用子组件的地方直接用 v-on 来监听子组件触发的事件。
+
+2. 实现原理
+
+   - 子父通信原理 (观察者模式)
+
+   - 事件总线原理 (发布订阅者模式)
+
+   > on只能监听同一个Vue实例上emit出来的事件，事件总线就是靠这个机制实现数据传递的。
+   >
+   > 但是父子组件是独立的Vue实例, 所以emit的事件,如果不在使用它的时候监听这个自定义事件，
+   >
+   > 在父组件里面如果用on是监听不到的, 但是可以在一个组件里面通信(至今没发现有什么用)
+
+## 08. Vue如何优化首页加载
+
+1. 首页白屏原因
+
+   > 主要原因是单页应用,加载资源过慢， 需要将所有需要的资源都下载到浏览器端并解析。单页面应用的html 是靠 js 生成，因为首屏需要加载很大的js文件(`app.js` `vendor.js`)，所以当网速差的时候会产生一定程度的白屏。
+
+2. 首屏优化方法
+
+   1. 在路由返回内容前添加loading(骨架屏)
+      - [vue-server-renderer](https://links.jianshu.com/go?to=https%3A%2F%2Fgithub.com%2Fvuejs%2Fvue%2Ftree%2Fdev%2Fpackages%2Fvue-server-renderer%23readme)
+      - [vue-skeleton-webpack-plugin](https://links.jianshu.com/go?to=https%3A%2F%2Fgithub.com%2Flavas-project%2Fvue-skeleton-webpack-plugin)
+      - [page-skeleton-webpack-plugin](https://links.jianshu.com/go?to=https%3A%2F%2Fgithub.com%2FElemeFE%2Fpage-skeleton-webpack-plugin)
+   2. 使用首屏SSR + 跳转SPA方式来优化
+   3. 改单页应用为多页应用,使用quicklink(单页面配合路由)技术
+   4. 协议优化(**B站前端铁蛋**儿)
+   5. 使用web worker
+   6. 第三方资源使用cdn
+   7. 优化webpackp配置
+      - webpack的code-split结合vue-router做懒加载
+      - wepack的contenthash模式,针对文件级别更改做缓存
+
+   8. 图片使用webp、小图采用base64编码、雪碧图等
+
+## 09. React 和 Vue 循环为什么加key？
+
+> 基于没有key的情况diff速度会更快, 没有绑定key的情况下遍历节点的时候,虚拟DOM的新旧节点会复用。
+
+```html
+<div id="app">
+    <div v-for="i in dataList">{{ i }}</div>
+</div>
+```
+
+```js
+let vm = new Vue({
+  el: '#app',
+  data: {
+    dataList: [1, 2, 3, 4, 5]
+  }
+})
+```
+
+以上的例子，v-for的内容会生成以下的dom节点数组，我们给每一个节点标记一个身份id：
+
+```js
+[
+  '<div>1</div>', // id： A
+  '<div>2</div>', // id:  B
+  '<div>3</div>', // id:  C
+  '<div>4</div>', // id:  D
+  '<div>5</div>'  // id:  E
+]
+```
+
+**1. 改变dataList数据**
+
+```js
+vm.dataList = [5, 4, 3, 1, 2]
+// 没有key的情况， 节点位置不变，但是节点innerText内容更新了
+  [
+    '<div>5</div>', // id： A
+    '<div>4</div>', // id:  B
+    '<div>3</div>', // id:  C
+    '<div>1</div>', // id:  D
+    '<div>2</div>'  // id:  E
+  ]
+
+// 有key的情况，dom节点位置进行了交换，但是内容没有更新
+// <div v-for="i in dataList" :key='i'>{{ i }}</div>
+  [
+    '<div>5</div>', // id： D
+    '<div>4</div>', // id:  A
+    '<div>3</div>', // id:  C
+    '<div>1</div>', // id:  E
+    '<div>2</div>'  // id:  B
+  ]
+```
+
+**2. 增删dataList数据**
+
+```js
+vm.dataList = [3, 4, 5, 6, 7] // 数据进行增删
+// 没有key的情况， 节点位置不变，内容也更新了
+[
+  '<div>3</div>', // id： A
+  '<div>4</div>', // id:  B
+  '<div>5</div>', // id:  C
+  '<div>6</div>', // id:  D
+  '<div>7</div>'  // id:  E
+]
+
+// 有key的情况， 节点删除了 A, B 节点，新增了 F, G 节点
+// <div v-for="i in dataList" :key='i'>{{ i }}</div>
+[
+  '<div>3</div>', // id： C
+  '<div>4</div>', // id:  D
+  '<div>5</div>', // id:  E
+  '<div>6</div>', // id:  F
+  '<div>7</div>'  // id:  G
+]
+```
+
+​	从以上来看，不带有key，**并且使用简单的模板，**基于这个前提下，可以更有效的复用节点，diff对比也是不带key的快，因为带key在增删节点上有耗时。这就是Vue文档所说的**默认模式**。但是这个并不是key作用，而是没有key的情况下可以对节点就地复用，提高性能。
+
+​	这种模式会带来一些隐藏的副作用，比如可能不会产生过渡效果，或者在某些节点有绑定数据（表单）状态，会出现状态错位。Vue文档也说明了这个默认的模式是高效的，但是只适用于不依赖子组件状态或临时 DOM 状态  的列表渲染输出(例如：表单输入值)。
+
+​	为什么还要建议带key呢？因为这种不带key只适用于渲染简单的无状态组件。对于大多数场景来说，列表组件都有自己的状态。
+
+## 10.路由
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="app">
+        <Father></Father>
+    </div>
+    <template id="father">
+        <div>
+            <h1>父组件</h1>
+            <p>子组件发过来的红包{{money}}</p>
+            <Son @hongbao="givemoney"></Son>
+        </div>
+    </template>
+    <template id="son">
+        <div>
+            <h1>子组件</h1>
+            <button @click="give">给父组件发送红包</button>
+        </div>
+    </template>
+    <script src="./vue.js"></script>
+    <script>
+        // 父组件
+        Vue.component('Father', {
+            template: '#father',
+            data() {
+                return {
+                    money: 0
+                }
+            },
+            methods: {
+                givemoney(sonmoney) {
+                    this.money = sonmoney
+                }
+            }
+        })
+        // 子组件
+        Vue.component('Son', {
+            template: '#son',
+            data() {
+                return {
+                    money: 3000
+                }
+            },
+            methods: {
+                give() {
+                    this.$emit('hongbao', this.money)
+                }
+            }
+        })
+        let vm = new Vue({
+            el: '#app'
+        })
+    </script>
+</body>
+
+</html>
