@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <ul>
+        <!-- 定义路由 -->
+        <li><a href="#/home">home</a></li>
+        <li><a href="#/about">about</a></li>
+
+        <!-- 渲染路由对应的 UI -->
+        <div id="routeView"></div>
+    </ul>
+    <script>
+        // 页面加载完不会触发 hashchange，这里主动触发一次 hashchange 事件
+        window.addEventListener('DOMContentLoaded', onHashChange)
+        // 监听路由变化
+        window.addEventListener('hashchange', onHashChange)
+
+        // 路由视图
+        let routerView = document.querySelector('#routeView')
+
+
+        // 路由变化时，根据路由渲染对应 UI
+        function onHashChange() {
+            switch (location.hash) {
+                case '#/home':
+                    routerView.innerHTML = 'Home'
+                    return
+                case '#/about':
+                    routerView.innerHTML = 'About'
+                    return
+                default:
+                    return
+            }
+        }
+    </script>
+</body>
+
+</html>

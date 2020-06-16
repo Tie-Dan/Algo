@@ -1,0 +1,53 @@
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+
+<body>
+    <ul>
+        <!-- 定义路由 -->
+        <li><a href="/home">home</a></li>
+        <li><a href="/about">about</a></li>
+        <!-- 渲染路由对应的 UI -->
+        <div id="routeView"></div>
+    </ul>
+</body>
+<script>
+    // 页面加载完不会触发 hashchange，这里主动触发一次 hashchange 事件
+    window.addEventListener('DOMContentLoaded', onLoad)
+    // 监听路由变化
+    window.addEventListener('popstate', onPopState)
+
+    // 路由视图
+    let routerView = document.querySelector('#routeView')
+
+    function onLoad() {
+
+        onPopState()
+
+        // 拦截 <a> 标签点击事件默认行为， 点击时使用 pushState 修改 URL并更新手动 UI，从而实现点击链接更新 URL 和 UI 的效果。
+        let linkList = document.querySelectorAll('a[href]')
+        linkList.forEach(el => el.addEventListener('click', function (e) {
+            e.preventDefault()
+            history.pushState(null, '', el.getAttribute('href'))
+            onPopState()
+        }))
+    }
+    // 路由变化时，根据路由渲染对应 UI
+    function onPopState() {
+        switch (location.pathname) {
+            case '/home':
+                routerView.innerHTML = 'Home'
+                return
+            case '/about':
+                routerView.innerHTML = 'About'
+                return
+            default:
+                return
+        }
+    }
+</script>
+
+</html>
