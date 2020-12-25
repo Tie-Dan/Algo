@@ -1,11 +1,10 @@
-const m = new Map();
-const o = {
-    p: 'Hello World'
-};
+const map = new Map([
+    ['name', '张三'],
+    ['title', 'Author']
+]);
 
-m.set(o, 'content')
-m.get(o) // "content"
-
-m.has(o) // true
-m.delete(o) // true
-m.has(o) // false
+map.size // 2
+map.has('name') // true
+map.get('name') // "张三"
+map.has('title') // true
+map.get('title') // "Author"

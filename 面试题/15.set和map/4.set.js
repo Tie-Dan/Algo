@@ -18,7 +18,7 @@ console.log([...set])
 
 
 let set1 = new Set([1, 2, 3])
-set2 = new Set([...set1].map(item => item * 2))
+set2 = new Set([...set1].map(item => item * 3))
 console.log([...set2]) // [2, 4, 6]
 
 set3 = new Set([...set2].filter(item => (item >= 4)))
