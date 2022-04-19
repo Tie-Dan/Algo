@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  hello,world
+  <input type="text" id="model">
+  <p id="word">我是铁蛋儿</p>
+  <!-- <script>
+        const model = document.getElementById("model")
+        const word = document.getElementById("word")
+
+
+        const newObj = new Proxy({}, {
+            get: function (target, key, receiver) {
+                console.log(`getting ${receiver}!`);
+                return Reflect.get(target, key, receiver);
+            },
+            set: function (target, key, value, receiver) {
+                console.log('setting', target, key, value, receiver);
+                if (key === "text") {
+                    model.value = value;
+                    word.innerHTML = value;
+                }
+                return Reflect.set(target, key, value, receiver);
+            }
+        });
+
+        model.addEventListener("keyup", function (e) {
+            newObj.text = e.target.value
+        })
+    </script> -->
+  <script>
+    function longestCommonPrefix(strs) {
+      // write code here
+      if (strs.length === 0 || strs === null) {
+        return ""
+      }
+      let maxid = strs[0].length - 1;
+      for (let i = 1; i < strs.length; i++) {
+        var indx = -1; //下标flag
+        while (indx < maxid && indx < strs[i].length - 1) {
+          if (strs[0].charAt(indx + 1) === strs[i].charAt(indx + 1)) {
+            indx++
+          } else {
+            break;
+          }
+        }
+        if (indx === -1) {
+          return ""
+        }
+        maxid = indx;
+      }
+      return strs[0].substring(0, maxid + 1);
+    }
+
+    console.log(longestCommonPrefix(["ab","abc","abca","abca", "abc", "abcc"]))
+
+
+
+
+
+  </script>
+</body>
+
+</html>
