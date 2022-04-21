@@ -9,12 +9,37 @@
 ![DFS](https://tva1.sinaimg.cn/large/e6c9d24ely1h0we46up81j20dm085jrs.jpg)
 
 - DFS 的思想是从上至下，对每一个分支一直往下一层遍历直到这个分支结束，然后返回上一层，对上一层的右子树这个分支继续深搜，直到一整棵树完全遍历，因此符合栈**后进先出**的特点
+
 - 深度优先遍历常用的数据结构是**栈**
+
 - DFS 特性 : 不全部保留结点，占用空间少;有回溯操作(即有入栈、出栈操作)，运行速度慢。
+
+  ```js
+       // 广度优先遍历  队列
+          let bfs = (node) => {
+              let stack = [] // 队列
+              let nodes = [] // 返回的节点
+              if (node) {
+                  stack.push(node)
+                  while (stack.length) {
+                      let item = stack.shift() // 从前面去
+                      nodes.push(item)
+                      let children = item.children
+                      for (let i = 0; i < children.length; i++) {
+                          stack.push(children[i])
+                      }
+                  }
+              }
+              return nodes
+          }
+          console.log(bfs(node_prent))
+  ```
+
+  
 
 #### 广度优先遍历（BFS）
 
-![BFS](../../Documents/B%25E7%25AB%2599%25E8%2587%25AA%25E5%25B7%25B1%25E8%25A7%2586%25E9%25A2%2591%25E7%25AC%2594%25E8%25AE%25B0/alog/img/BFS.png)
+![BFS](https://tva1.sinaimg.cn/large/e6c9d24ely1h1f5do85i6j20cj07v74l.jpg)
 
 - BFS 的思想是从左至右，对树的每一层所有结点依次遍历，当一层的结点遍历完全后，对下一层开始遍历，而下一层结点又恰好是上一层的子结点。因此符合队**列先进先出**的特点
 - 深度优先遍历常用的数据结构为队列
@@ -22,7 +47,7 @@
 
 ## 02. 发布订阅者和观察者
 
- 	![](img/ss.png)
+![ss](https://tva1.sinaimg.cn/large/e6c9d24ely1h1f7fk0a6jj20fe0acjs7.jpg)
 
 **观察者模式：**观察者（Observer）直接订阅（Subscribe）主题（Subject），而当主题被激活的时候，会触发（Fire Event）观察者里的事件。
 

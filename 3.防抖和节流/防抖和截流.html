@@ -10,14 +10,14 @@
 <body style="height: 5000px;">
     <script>
         // 防抖
-        // function debounce(fn, wait) {
-        //     var timeout = null;
-        //     return ()= {
-        //         if (timeout !== null)
-        //             clearTimeout(timeout);
-        //         timeout = setTimeout(fn, wait);
-        //     }
-        // }
+        function debounce(fn, wait) {
+            var timeout = null;
+            return () => {
+                if (timeout !== null)
+                    clearTimeout(timeout);
+                timeout = setTimeout(fn, wait);
+            }
+        }
         // 截流
         function throttle(fn, delay) {
             var lastTime = 0; // 上一次函数触发的时间
