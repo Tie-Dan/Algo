@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    Function.prototype.mycall = function (thisArg = window, ...args) {
+      // 创建一个唯一的fn函数
+      let fn = Symbol('thisFn')
+      // 添加fn
+      thisArg[fn] = this
+      // 存储返回值
+      let res = thisArg[fn](...args)
+      // 删除返回值 避免污染环境变量
+      delete thisArg[fn]
+      return res
+    }
+    // 1. 普通函数
+    let tiedan = {
+      name: 'tiedan',
+      fn() {
+        console.log('tiedan.fn', 1)
+      }
+    }
+    let xbl = {
+      name: '小白龙',
+      intr(...args) {
+        console.log('hello my name is' + this.name)
+        return Array.from(args).reduce((total, item) => total + item, 0)
+      }
+    }
+    tiedan.fn()
+    let res = xbl.intr.mycall(tiedan, 1, 2, 3, 4, 5)
+    console.log(res)
+
+    // 2. 构造函数
+    let Animal = function (name) {
+      this.name = name
+    }
+    let Cat = function (name, color) {
+      Animal.mycall(this, name)
+      this.color = color
+    }
+    let cat = new Cat('tom', 'red')
+    console.log(cat)
+  </script>
+</body>
+
+</html>

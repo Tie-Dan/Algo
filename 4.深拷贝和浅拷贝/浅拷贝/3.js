@@ -1,10 +1,10 @@
-var obj = {
+let obj = {
     a: 1,
     b: {
         c: 1
     }
 }
-var obj2 = {
+let obj2 = {
     ...obj
 };
 obj.a = 2;

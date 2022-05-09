@@ -1,4 +1,4 @@
-var obj1 = {
+let obj1 = {
     a: {
         b: 1
     },
@@ -8,7 +8,7 @@ Object.defineProperty(obj1, 'innumerable', {
     value: '不可枚举属性',
     enumerable: false
 });
-var obj2 = {};
+let obj2 = {};
 
 Object.assign(obj2, obj1)
 
